@@ -1,0 +1,7 @@
+C:\Users\brije\source\repos\A star algorithm\A star algorithm\bin\Debug\A star algorithm.exe.config
+C:\Users\brije\source\repos\A star algorithm\A star algorithm\bin\Debug\A star algorithm.exe
+C:\Users\brije\source\repos\A star algorithm\A star algorithm\bin\Debug\A star algorithm.pdb
+C:\Users\brije\source\repos\A star algorithm\A star algorithm\obj\Debug\A star algorithm.csprojAssemblyReference.cache
+C:\Users\brije\source\repos\A star algorithm\A star algorithm\obj\Debug\A star algorithm.csproj.CoreCompileInputs.cache
+C:\Users\brije\source\repos\A star algorithm\A star algorithm\obj\Debug\A star algorithm.exe
+C:\Users\brije\source\repos\A star algorithm\A star algorithm\obj\Debug\A star algorithm.pdb
