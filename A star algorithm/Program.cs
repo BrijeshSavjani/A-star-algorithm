@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using System.IO;
+using System.Text.RegularExpressions;
 namespace A_star_algorithm
 {
     public class Node
@@ -26,19 +27,42 @@ namespace A_star_algorithm
        static void Main(string[] args)
         {
             Node[,] grid = new Node[10,10]; //Makes a blank grid (2D array of Nodes)
-            for(int i = 0; i <= grid.GetLength(0) - 1; i++)
-            {
-                for (int k = 0; k <= grid.GetLength(1) - 1; k++) { grid[i, k] = new Node(false); } //Populare grid
-            }
-            Position start = new Position(0, 4);
-            Position end = new Position(5, 6);
+            var GRID = A_star_algorithm.Properties.Resources.Grid;
+            Position[] InitialPositions = CreateGrid(GRID, grid);
+            Position start = InitialPositions[0];
+            Position end = InitialPositions[1];
             List<Position> path = AStar(grid,start,end);
             OutputGrid(grid,start,end,path);
             Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine("Green is the start position");
             Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Yellow is a step taken");
             Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("Red is the end position");
+            Console.ForegroundColor = ConsoleColor.Magenta; Console.WriteLine("Magenta is an obstacle");
             Console.Read();
 
+        }
+        public static Position[] CreateGrid(string GRID, Node[,] grid) 
+        {
+            Position[] StartEndPositions = new Position[2];
+            string[] Rows = GRID.Split('\r');
+            int row_number = 0;
+            int column_number = 0;
+            while (row_number < Rows.GetLength(0)) 
+            {
+                string row = Rows[row_number];
+                string Row = Regex.Replace(row, @"\t|\n|\r", "");
+                String[] Columns = Row.Split(',');
+                while (column_number < Columns.Length) 
+                { 
+                    if (Columns[column_number] == "0") { grid[column_number, row_number] = new Node(false);}
+                    if (Columns[column_number] == "1") { grid[column_number, row_number] = new Node(true); }
+                    if (Columns[column_number] == "S") { grid[column_number, row_number] = new Node(false);StartEndPositions[0] = new Position(column_number, row_number); }
+                    if (Columns[column_number] == "E") { grid[column_number, row_number] = new Node(false); StartEndPositions[1] = new Position(column_number, row_number); }
+                    column_number += 1;
+                }
+                row_number += 1;
+                column_number = 0;
+            }
+            return StartEndPositions;
         }
         public static void OutputGrid(Node[,] grid,Position start,Position end, List<Position> path) 
         {
@@ -51,6 +75,7 @@ namespace A_star_algorithm
                     foreach(Position step in path) {if(x_count == step.X & y_vount == step.Y) { Console.ForegroundColor = ConsoleColor.Yellow; } }
                     if (x_count == start.X & y_vount == start.Y) { Console.ForegroundColor = ConsoleColor.Green;}
                     if (x_count == end.X & y_vount == end.Y) { Console.ForegroundColor = ConsoleColor.Red; }
+                    if (grid[x_count, y_vount].blocked == true) { Console.ForegroundColor = ConsoleColor.Magenta; }
                     Console.Write(" 0 ");
                     x_count += 1;
                     Console.ForegroundColor = ConsoleColor.White;
