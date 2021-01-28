@@ -9,85 +9,89 @@ namespace A_star_algorithm
 {
     public class Node
     {
-        public double total_value = 0;//F
-        public double distance_to_start = 0;//G
-        public double hueristic = 0;//H
+        public double total_value = 0;
+        public double distance_to_start = 0;
+        public double hueristic = 0;
         public bool blocked;//Is the node blocked by an obstacle
         public Node(bool Blocked) { blocked = Blocked; }
     }
-    public class Position 
+    public class Position //Position of nodes
     {
-        public int X;
-        public int Y;
-        public Position(int x, int y) { X = x;Y = y;}
+        public int X;//X coordinate
+        public int Y;//Y coordinate
+        public Position(int x, int y) { X = x;Y = y;}//Initialiser
     
-    } //Position of nodes
+    } 
     class Program
     {
        static void Main(string[] args)
         {
             Node[,] grid = new Node[10,10]; //Makes a blank grid (2D array of Nodes)
-            var GRID = A_star_algorithm.Properties.Resources.Grid;
-            Position[] InitialPositions = CreateGrid(GRID, grid);
+            var GRID = A_star_algorithm.Properties.Resources.Grid; //Open grid from text file
+            Position[] InitialPositions = CreateGrid(GRID, grid);//Gets Start & End positions from textfile
+            //^Also sets up grid
             Position start = InitialPositions[0];
             Position end = InitialPositions[1];
-            List<Position> path = AStar(grid,start,end);
-            OutputGrid(grid,start,end,path);
+            List<Position> path = AStar(grid,start,end);//Runs the Astar function to find and return path
+            OutputGrid(grid,start,end,path); //Output grid
+            //Key is below
             Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine("Green is the start position");
             Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Yellow is a step taken");
             Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("Red is the end position");
             Console.ForegroundColor = ConsoleColor.Magenta; Console.WriteLine("Magenta is an obstacle");
-            Console.Read();
+            Console.Read();//Pause so user can read before Application closes
 
         }
-        public static Position[] CreateGrid(string GRID, Node[,] grid) 
+        public static Position[] CreateGrid(string GRID, Node[,] grid) //Creates Grid & Return Start & End positions in Array
         {
-            Position[] StartEndPositions = new Position[2];
-            string[] Rows = GRID.Split('\r');
+            Position[] StartEndPositions = new Position[2];//Array to return
+            string[] Rows = GRID.Split('\r');//Split by lines
             int row_number = 0;
             int column_number = 0;
-            while (row_number < Rows.GetLength(0)) 
+            while (row_number < Rows.GetLength(0)) //For every row
             {
-                string row = Rows[row_number];
-                string Row = Regex.Replace(row, @"\t|\n|\r", "");
-                String[] Columns = Row.Split(',');
-                while (column_number < Columns.Length) 
+                string row = Rows[row_number]; 
+                string Row = Regex.Replace(row, @"\n", "");//Remove any new line charecters left (.Replace didn't work)
+                String[] Columns = Row.Split(','); //Split by comma for each cell
+                while (column_number < Columns.Length) //Every column
                 { 
-                    if (Columns[column_number] == "0") { grid[column_number, row_number] = new Node(false);}
-                    if (Columns[column_number] == "1") { grid[column_number, row_number] = new Node(true); }
+                    if (Columns[column_number] == "0") { grid[column_number, row_number] = new Node(false);}//Normal node
+                    if (Columns[column_number] == "1") { grid[column_number, row_number] = new Node(true); }//Obstacle node
                     if (Columns[column_number] == "S") { grid[column_number, row_number] = new Node(false);StartEndPositions[0] = new Position(column_number, row_number); }
+                    //^Start node
                     if (Columns[column_number] == "E") { grid[column_number, row_number] = new Node(false); StartEndPositions[1] = new Position(column_number, row_number); }
+                    //^End node
                     column_number += 1;
                 }
                 row_number += 1;
                 column_number = 0;
             }
-            return StartEndPositions;
+            return StartEndPositions; //returns positions
         }
         public static void OutputGrid(Node[,] grid,Position start,Position end, List<Position> path) 
         {
             int x_count = 0;
             int y_vount = 0;
-            while(y_vount < grid.GetLength(1))
+            while(y_vount < grid.GetLength(1))//For every row
             {
                 while(x_count < grid.GetLength(0))
                 {
-                    foreach(Position step in path) {if(x_count == step.X & y_vount == step.Y) { Console.ForegroundColor = ConsoleColor.Yellow; } }
-                    if (x_count == start.X & y_vount == start.Y) { Console.ForegroundColor = ConsoleColor.Green;}
-                    if (x_count == end.X & y_vount == end.Y) { Console.ForegroundColor = ConsoleColor.Red; }
-                    if (grid[x_count, y_vount].blocked == true) { Console.ForegroundColor = ConsoleColor.Magenta; }
-                    Console.Write(" 0 ");
+                    foreach(Position step in path) {if(x_count == step.X & y_vount == step.Y) { Console.ForegroundColor = ConsoleColor.Yellow; } } //Path = yellow
+                    if (x_count == start.X & y_vount == start.Y) { Console.ForegroundColor = ConsoleColor.Green;} //Start = green
+                    if (x_count == end.X & y_vount == end.Y) { Console.ForegroundColor = ConsoleColor.Red; }//end = yellow
+                    if (grid[x_count, y_vount].blocked == true) { Console.ForegroundColor = ConsoleColor.Magenta; }//obstacle = magenta
+                    Console.Write(" 0 ");//Charechter to insert to make grid
                     x_count += 1;
-                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.ForegroundColor = ConsoleColor.White; //Normal node is white
                 }
-                Console.WriteLine();
+                Console.WriteLine();//New line
                 x_count = 0;
                 y_vount += 1;
             }
         }
         public static List<Position> FindNeighbours(Position last_position, Node[,] grid)
         {
-            List<Position> neighbour_nodes = new List<Position> { };
+            List<Position> neighbour_nodes = new List<Position> { }; //List to return
             int Maximum_X_Position = grid.GetLength(0); 
             int Maximum_Y_Position = grid.GetLength(1);
             int x = -1;
@@ -109,6 +113,7 @@ namespace A_star_algorithm
 
                 x = x + 1;
             }
+            //Code below removes the orignal value from List (.Remove(last_position) didn't work because C# can't compare two custom classes to compare)
             int counter = 0;
             while( counter < neighbour_nodes.Count)
             {
