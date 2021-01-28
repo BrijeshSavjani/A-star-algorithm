@@ -12,8 +12,9 @@ namespace A_star_algorithm
         public double total_value = 0;
         public double distance_to_start = 0;
         public double hueristic = 0;
+        public double NodeValue;
         public bool blocked;//Is the node blocked by an obstacle
-        public Node(bool Blocked) { blocked = Blocked; }
+        public Node(bool Blocked, double node_value) { blocked = Blocked;NodeValue = node_value; }
     }
     public class Position //Position of nodes
     {
@@ -54,12 +55,13 @@ namespace A_star_algorithm
                 string Row = Regex.Replace(row, @"\n", "");//Remove any new line charecters left (.Replace didn't work)
                 String[] Columns = Row.Split(','); //Split by comma for each cell
                 while (column_number < Columns.Length) //Every column
-                { 
-                    if (Columns[column_number] == "0") { grid[column_number, row_number] = new Node(false);}//Normal node
-                    if (Columns[column_number] == "1") { grid[column_number, row_number] = new Node(true); }//Obstacle node
-                    if (Columns[column_number] == "S") { grid[column_number, row_number] = new Node(false);StartEndPositions[0] = new Position(column_number, row_number); }
+                {
+  
+                    if (int.TryParse(Columns[column_number], out int value) == true) { grid[column_number, row_number] = new Node(false, value); }//Normal node
+                    if (Columns[column_number] == "O") { grid[column_number, row_number] = new Node(true,0); }//Obstacle node
+                    if (Columns[column_number] == "S") { grid[column_number, row_number] = new Node(false,0);StartEndPositions[0] = new Position(column_number, row_number); }
                     //^Start node
-                    if (Columns[column_number] == "E") { grid[column_number, row_number] = new Node(false); StartEndPositions[1] = new Position(column_number, row_number); }
+                    if (Columns[column_number] == "E") { grid[column_number, row_number] = new Node(false,0); StartEndPositions[1] = new Position(column_number, row_number); }
                     //^End node
                     column_number += 1;
                 }
@@ -80,7 +82,7 @@ namespace A_star_algorithm
                     if (x_count == start.X & y_vount == start.Y) { Console.ForegroundColor = ConsoleColor.Green;} //Start = green
                     if (x_count == end.X & y_vount == end.Y) { Console.ForegroundColor = ConsoleColor.Red; }//end = yellow
                     if (grid[x_count, y_vount].blocked == true) { Console.ForegroundColor = ConsoleColor.Magenta; }//obstacle = magenta
-                    Console.Write(" 0 ");//Charechter to insert to make grid
+                    Console.Write(" " + grid[x_count, y_vount].NodeValue.ToString() + " ");//Charechter to insert to make grid
                     x_count += 1;
                     Console.ForegroundColor = ConsoleColor.White; //Normal node is white
                 }
