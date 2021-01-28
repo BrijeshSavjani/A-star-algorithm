@@ -62,6 +62,17 @@ namespace A_star_algorithm
 
                 x = x + 1;
             }
+            int counter = 0;
+            while( counter < neighbour_nodes.Count)
+            {
+                Position neighbour = neighbour_nodes[counter];
+                if (neighbour.X == last_position.X & neighbour.Y == last_position.Y) 
+                {
+                    neighbour_nodes.RemoveAt(counter);
+                    break;
+                }
+                counter += 1;
+            }
             return neighbour_nodes;
         }
 
@@ -75,8 +86,8 @@ namespace A_star_algorithm
                 Position last_position = followed_path[followed_path.Count - 1]; //Gets Last position on path
 
                 //Finding Neighbours Below
-               neighbour_nodes =  FindNeighbours(last_position,grid);// Finds all the neigbours of a node
-                neighbour_nodes.Remove(last_position) ;//Removes itself from neigbour list
+                neighbour_nodes =  FindNeighbours(last_position,grid);// Finds all the neigbours of a node
+              
                foreach (Position neighbour in neighbour_nodes) { grid[neighbour.X,neighbour.Y].distance_to_start = grid[last_position.X, last_position.Y].distance_to_start + 1;}//Updates position from start
                foreach (Position neighbour in neighbour_nodes) 
                 {
@@ -92,7 +103,7 @@ namespace A_star_algorithm
                      else { minimum_value_flag = neighbour;minimum_value = grid[neighbour.X, neighbour.Y].total_value; }//else update minimum_value and the position of lowest value
                 }
                 followed_path.Add(minimum_value_flag); //Add the lowest to the followed path
-                if (minimum_value_flag == EndingPosition) 
+                if (minimum_value_flag.X == EndingPosition.X & minimum_value_flag.Y == EndingPosition.Y) 
                 { 
                     finished_search = true; } //Breal loop if path has finished
             }
