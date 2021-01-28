@@ -33,11 +33,33 @@ namespace A_star_algorithm
             Position start = new Position(0, 4);
             Position end = new Position(5, 6);
             List<Position> path = AStar(grid,start,end);
-            Console.WriteLine(path);
+            OutputGrid(grid,start,end,path);
+            Console.ForegroundColor = ConsoleColor.Green; Console.WriteLine("Green is the start position");
+            Console.ForegroundColor = ConsoleColor.Yellow; Console.WriteLine("Yellow is a step taken");
+            Console.ForegroundColor = ConsoleColor.Red; Console.WriteLine("Red is the end position");
             Console.Read();
 
         }
-
+        public static void OutputGrid(Node[,] grid,Position start,Position end, List<Position> path) 
+        {
+            int x_count = 0;
+            int y_vount = 0;
+            while(y_vount < grid.GetLength(1))
+            {
+                while(x_count < grid.GetLength(0))
+                {
+                    foreach(Position step in path) {if(x_count == step.X & y_vount == step.Y) { Console.ForegroundColor = ConsoleColor.Yellow; } }
+                    if (x_count == start.X & y_vount == start.Y) { Console.ForegroundColor = ConsoleColor.Green;}
+                    if (x_count == end.X & y_vount == end.Y) { Console.ForegroundColor = ConsoleColor.Red; }
+                    Console.Write(" 0 ");
+                    x_count += 1;
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                Console.WriteLine();
+                x_count = 0;
+                y_vount += 1;
+            }
+        }
         public static List<Position> FindNeighbours(Position last_position, Node[,] grid)
         {
             List<Position> neighbour_nodes = new List<Position> { };
@@ -57,7 +79,7 @@ namespace A_star_algorithm
                             y = y + 1; //Iterate Y
                         }
                     }
-                    y = -1; // reset why for next x value
+                    y = -1; // reset y for next x value
                 }
 
                 x = x + 1;
@@ -103,9 +125,7 @@ namespace A_star_algorithm
                      else { minimum_value_flag = neighbour;minimum_value = grid[neighbour.X, neighbour.Y].total_value; }//else update minimum_value and the position of lowest value
                 }
                 followed_path.Add(minimum_value_flag); //Add the lowest to the followed path
-                if (minimum_value_flag.X == EndingPosition.X & minimum_value_flag.Y == EndingPosition.Y) 
-                { 
-                    finished_search = true; } //Breal loop if path has finished
+                if (minimum_value_flag.X == EndingPosition.X & minimum_value_flag.Y == EndingPosition.Y) { finished_search = true; } //Breal loop if path has finished
             }
            
             return followed_path;//Returns Path
